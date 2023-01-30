@@ -40,11 +40,8 @@ class TaskListViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "TaskListCell", for: indexPath)
-        var content = cell.defaultContentConfiguration()
         let taskList = taskLists[indexPath.row]
-        content.text = taskList.name
-        content.secondaryText = "\(taskList.tasks.count)"
-        cell.contentConfiguration = content
+        cell.configure(with: taskList)
         return cell
     }
     
@@ -85,6 +82,12 @@ class TaskListViewController: UITableViewController {
     }
 
     @IBAction func sortingList(_ sender: UISegmentedControl) {
+        if sender.selectedSegmentIndex == 0 {
+            taskLists = taskLists.sorted(byKeyPath: "date")
+        } else {
+            taskLists = taskLists.sorted(byKeyPath: "name")
+        }
+        tableView.reloadData()
     }
     
     @objc private func  addButtonPressed() {
@@ -122,6 +125,27 @@ extension TaskListViewController {
         
         let rowIndex = IndexPath(row: taskLists.index(of: taskList) ?? 0, section: 0)
         tableView.insertRows(at: [rowIndex], with: .automatic)
+    }
+}
+
+extension UITableViewCell {
+    func configure(with taskList: TaskList) {
+        let currentTasks = taskList.tasks.filter("isComplete = false")
+        var content = defaultContentConfiguration()
+
+        content.text = taskList.name
+        
+        if taskList.tasks.isEmpty {
+            content.secondaryText = "0"
+            accessoryType = .none
+        } else if currentTasks.isEmpty {
+            content.secondaryText = "✅"
+        } else {
+            content.secondaryText = "\(currentTasks.count)"
+            accessoryType = .none
+        }
+
+        contentConfiguration = content
     }
 }
 

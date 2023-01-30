@@ -53,16 +53,13 @@ class TasksViewController: UITableViewController {
         cell.contentConfiguration = content
         return cell
     }
-    
-    @objc private func addButtonPressed() {
-        showAlert()
-    }
 
 // MARK: - Table View Delegate
     
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
         let task = indexPath.section == 0 ? currentTasks[indexPath.row] : completedTasks[indexPath.row]
+        let title = indexPath.section == 0 ? "Done" : "Undone"
         
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { _, _, _ in
             StorageManager.shared.delete(task)
@@ -76,7 +73,7 @@ class TasksViewController: UITableViewController {
             isDone(true)
         }
         
-        let doneAction = UIContextualAction(style: .normal, title: "Done") { _, _, isDone in
+        let doneAction = UIContextualAction(style: .normal, title: title) { _, _, isDone in
             StorageManager.shared.done(task)
             let indexPathForCurrentTask = IndexPath(row: self.currentTasks.count - 1, section: 0)
             let indexPathForCompletedTask = IndexPath(row: self.completedTasks.count - 1, section: 1)
@@ -120,4 +117,10 @@ extension TasksViewController {
         let rowIndex = IndexPath(row: currentTasks.index(of: task) ?? 0, section: 0)
         tableView.insertRows(at: [rowIndex], with: .automatic)
     }
+    
+    @objc private func addButtonPressed() {
+        showAlert()
+    }
 }
+
+
