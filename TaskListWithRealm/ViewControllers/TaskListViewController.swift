@@ -90,17 +90,14 @@ class TaskListViewController: UITableViewController {
         tableView.reloadData()
     }
     
-    @objc private func  addButtonPressed() {
+    @objc private func addButtonPressed() {
         showAlert()
     }
-    
-    private func createTempData() {
-        DataManager.shared.createTempDataV2 {
-            self.tableView.reloadData()
-        }
-    }
+
 }
 
+
+//MARK: - Alert Controller
 extension TaskListViewController {
     
     private func showAlert(with taskList: TaskList? = nil, completion: (() -> Void)? = nil) {
@@ -119,6 +116,7 @@ extension TaskListViewController {
         present(alert, animated: true)
     }
     
+//MARK: - Data Methods
     private func save(taskList: String) {
         let taskList = TaskList(value: [taskList])
         StorageManager.shared.save(taskList)
@@ -126,8 +124,15 @@ extension TaskListViewController {
         let rowIndex = IndexPath(row: taskLists.index(of: taskList) ?? 0, section: 0)
         tableView.insertRows(at: [rowIndex], with: .automatic)
     }
+    
+    private func createTempData() {
+        DataManager.shared.createTempDataV2 {
+            self.tableView.reloadData()
+        }
+    }
 }
 
+//MARK: - Cofigure Tasklist
 extension UITableViewCell {
     func configure(with taskList: TaskList) {
         let currentTasks = taskList.tasks.filter("isComplete = false")
